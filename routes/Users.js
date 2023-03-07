@@ -84,7 +84,7 @@ router.get('/getDetailUser/:id', async function (req, res) {
 router.post("/register", async (req, res) => {
   try {
     const query = `INSERT INTO [Q_ONLINE].[dbo].[user] (id_card, password, prifix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date, is_used, role)
-    VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prifix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(), '1', '${req.body.role}')`;
+    VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prifix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(), '1', '0')`;
     await mssql.sql.query(query, (err, data) => {
       if (data) {
         res.status(200).send(respon.success());
@@ -100,7 +100,7 @@ router.post("/register", async (req, res) => {
 router.post("/createUser", async (req, res) => {
   try {
     const query = `INSERT INTO [Q_ONLINE].[dbo].[user] (id_card, password, prifix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date, is_used, role)
-     VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prifix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(), '1', '${req.body.role}')`;
+     VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prifix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(), '1', '0')`;
     await mssql.sql.query(query, (err, data) => {
       if (data) {
         res.status(200).send(respon.success());
@@ -150,7 +150,7 @@ router.put("/updateUser/:id", async (req, res) => {
         name_contact ='${req.body.name_contact}',
         lastname_contact = '${req.body.lastname_contact}',
         is_used = '${req.body.is_used}',
-        role = '${req.body.role}'
+        role = '0'
         WHERE id = '${req.params.id}' `;
     await mssql.sql.query(query, (err, data) => {
       console.log(data);
