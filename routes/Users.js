@@ -18,6 +18,11 @@ router.get("/getUsers", async (req, res) => {
       [user].name,
       [user].lastname,
       CONCAT([prefix].name,' ',[user].name,' ',[user].lastname) AS fullname,
+      [user].address,
+      [user].subdistrict,
+      [user].district,
+      [user].province,
+      [user].postcode,
       [user].phone_number,
       [user].created_date,
       [user].is_used,
@@ -35,7 +40,7 @@ router.get("/getUsers", async (req, res) => {
           if(status){
             query = query.filter((a) => a.is_used.toString() === status.toString());
           }
-          
+
           res.send(respon.pagination(parseInt(pageSize), parseInt(currentPage), query));
         } else {
             res.status(500).send(respon.error());
@@ -155,6 +160,31 @@ router.put("/updateUser/:id", async (req, res) => {
         res.status(500).send(respon.error());
       }
     });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.put('/updateStatusUser/:id', async function (req, res) {
+  try {
+    console.log('req params :', req.params);
+    console.log('req body :', req.body);
+
+    await mssql.sql.query(
+      `UPDATE [user] SET is_used = '${req.body.status}'
+       WHERE id = '${req.params.id}'`,
+      function (err, response) {
+        if (response) {
+          res.status(200).send(respon.success());
+        } else {
+          if (err) {
+            res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+          } else {
+            res.status(500).send(respon.error());
+          }
+        }
+      },
+    );
   } catch (error) {
     console.log(error);
   }
