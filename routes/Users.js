@@ -28,7 +28,7 @@ router.get("/getUsers", async (req, res) => {
       [user].is_used,
       [user].role
     FROM [user] 
-    INNER JOIN prefix ON [user].prifix_id = [prefix].id
+    INNER JOIN prefix ON [user].prefix_id = [prefix].id
     WHERE [user].role = 0`, (err, response) => {
       if (response) {
         if (response.recordset) {
