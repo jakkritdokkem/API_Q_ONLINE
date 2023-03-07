@@ -83,13 +83,17 @@ router.get('/getDetailUser/:id', async function (req, res) {
 
 router.post("/register", async (req, res) => {
   try {
-    const query = `INSERT INTO [Q_ONLINE].[dbo].[user] (id_card, password, prifix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date, is_used, role)
-    VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prifix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(), '1', '0')`;
-    await mssql.sql.query(query, (err, data) => {
-      if (data) {
+    const query = `INSERT INTO [user] (id_card, password, prefix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date, is_used, role)
+    VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prefix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(),1,0)`;
+    await mssql.sql.query(query, (err, response) => {
+      if (response) {
         res.status(200).send(respon.success());
       } else {
-        res.status(500).send(respon.error());
+        if (err) {
+          res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+        } else {
+          res.status(500).send(respon.error());
+        }
       }
     });
   } catch (error) {
@@ -99,13 +103,18 @@ router.post("/register", async (req, res) => {
 
 router.post("/createUser", async (req, res) => {
   try {
-    const query = `INSERT INTO [Q_ONLINE].[dbo].[user] (id_card, password, prifix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date, is_used, role)
-     VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prifix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(), '1', '0')`;
-    await mssql.sql.query(query, (err, data) => {
-      if (data) {
+    console.log(req.body)
+    const query = `INSERT INTO [user] (id_card, password, prefix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date,is_used,role)
+     VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prefix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(),1,0)`;
+    await mssql.sql.query(query, (err, response) => {
+      if (response) {
         res.status(200).send(respon.success());
       } else {
-        res.status(500).send(respon.error());
+        if (err) {
+          res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+        } else {
+          res.status(500).send(respon.error());
+        }
       }
     });
   } catch (error) {
@@ -135,7 +144,7 @@ router.put("/updateUser/:id", async (req, res) => {
         SET
         id_card = '${req.body.id_card}', 
         password = '${req.body.password}', 
-        prifix_id = '${req.body.prifix_id}', 
+        prefix_id = '${req.body.prefix_id}', 
         name = '${req.body.name}', 
         lastname = '${req.body.lastname}', 
         birthday = '${req.body.birthday}', 
@@ -148,16 +157,17 @@ router.put("/updateUser/:id", async (req, res) => {
         postcode = '${req.body.postcode}',
         prifix_contact_id = '${req.body.prifix_contact_id}',
         name_contact ='${req.body.name_contact}',
-        lastname_contact = '${req.body.lastname_contact}',
-        is_used = '${req.body.is_used}',
-        role = '0'
+        lastname_contact = '${req.body.lastname_contact}'
         WHERE id = '${req.params.id}' `;
-    await mssql.sql.query(query, (err, data) => {
-      console.log(data);
-      if (data) {
+    await mssql.sql.query(query, (err, response) => {
+      if (response) {
         res.status(200).send(respon.success());
       } else {
-        res.status(500).send(respon.error());
+        if (err) {
+          res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+        } else {
+          res.status(500).send(respon.error());
+        }
       }
     });
   } catch (error) {
