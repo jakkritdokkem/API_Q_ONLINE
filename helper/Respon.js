@@ -1,5 +1,5 @@
-function pagination(pagesize, currentpage, data) {
-  let value = data.slice(pagesize * (currentpage - 1), pagesize * currentpage).slice(0, pagesize);
+function pagination(pageSize, currentPage, data) {
+  let value = data.slice(pageSize * (currentPage - 1), pageSize * currentPage).slice(0, pageSize);
 
   return {
     statusCode: 200,
@@ -7,9 +7,9 @@ function pagination(pagesize, currentpage, data) {
     message: 'Success',
     pagin: {
       totalRow: data.length,
-      pageSize: pagesize,
-      currentPage: currentpage,
-      totalPage: Math.ceil(data.length / pagesize),
+      pageSize: pageSize,
+      currentPage: currentPage,
+      totalPage: Math.ceil(data.length / pageSize),
     },
     data: value,
   };
@@ -19,8 +19,8 @@ function success() {
   return { statusCode: 200, taskStatus: true, message: 'Success' };
 }
 
-function error() {
-  return { statusCode: 500, taskStatus: false, message: 'Unsuccess' };
+function error(statusCode = 500, message = 'Unsuccess') {
+  return { statusCode: statusCode, taskStatus: false, message: message };
 }
 
 function single(data) {
