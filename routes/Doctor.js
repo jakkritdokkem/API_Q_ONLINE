@@ -17,15 +17,15 @@ router.get('/getDoctor', async function (req, res) {
     doc.id,
     doc.treatment_type_id,
     tre.treatment_type_name,
-    doc.prifix_id,
-    pre.name AS prifix_name,
+    doc.prefix_id,
+    pre.name AS prefix_name,
     doc.name,
     doc.lastname,
     CONCAT(pre.name, ' ', doc.name, ' ', doc.lastname) AS fullname,
     doc.is_used
     FROM doctor AS doc
     LEFT JOIN treatment_type AS tre ON doc.treatment_type_id = tre.id
-    LEFT JOIN prefix AS pre ON doc.prifix_id = pre.id`;
+    LEFT JOIN prefix AS pre ON doc.prefix_id = pre.id`;
 
     await mssql.sql.query(query, function (err, response) {
       if (response) {
@@ -84,13 +84,51 @@ router.get('/getDetailDoctor/:id', async (req, res) => {
   }
 });
 
+router.get('/getDoctorBy/:id', async (req, res) => {
+  try {
+    const query = `SELECT
+    doc.id,
+    doc.treatment_type_id,
+    tre.treatment_type_name,
+    doc.prefix_id,
+    pre.name AS prefix_name,
+    doc.name,
+    doc.lastname,
+    CONCAT(pre.name, ' ', doc.name, ' ', doc.lastname) AS fullname,
+    doc.is_used
+    FROM doctor AS doc
+    LEFT JOIN treatment_type AS tre ON doc.treatment_type_id = tre.id
+    LEFT JOIN prefix AS pre ON doc.prefix_id = pre.id
+    WHERE doc.treatment_type_id = '${req.params.id}'`;
+
+    mssql.sql.query(query, function (err, response) {
+      if (response) {
+        if (response.recordset) {
+          var query = response.recordset;
+          res.status(200).send(respon.multi(query));
+        } else {
+          res.status(500).send(respon.error());
+        }
+      } else {
+        if (err) {
+          res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+        } else {
+          res.status(500).send(respon.error());
+        }
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 router.post('/createDoctor', async (req, res) => {
   try {
-    const { treatment, prifixId, name, lastname } = req.body;
+    const { treatment, prefixId, name, lastname } = req.body;
 
     const query = `INSERT INTO doctor
-    (treatment_type_id, prifix_id, name, lastname, created_date, is_used)
-    values('${treatment}', '${prifixId}', '${name}', '${lastname}', GETDATE(), 1)`;
+    (treatment_type_id, prefix_id, name, lastname, created_date, is_used)
+    values('${treatment}', '${prefixId}', '${name}', '${lastname}', GETDATE(), 1)`;
 
     await mssql.sql.query(query, function (err, response) {
       if (response) {
@@ -110,14 +148,17 @@ router.post('/createDoctor', async (req, res) => {
 
 router.put('/updateDoctor/:id', async (req, res) => {
   try {
-    const { treatment, prifixId, name, lastname } = req.body;
+    const { treatment, prefixId, name, lastname } = req.body;
+
+    console.log('req.body', req.body);
+    console.log('req.params', req.params);
 
     const query = `UPDATE doctor
     SET
     treatment_type_id = '${treatment}' ,
-    prifix_id = '${prifixId}',
+    prefix_id = '${prefixId}',
     name = '${name}',
-    lastname = '${lastname}',
+    lastname = '${lastname}'
     WHERE id = '${req.params.id}'`;
 
     await mssql.sql.query(query, function (err, response) {
