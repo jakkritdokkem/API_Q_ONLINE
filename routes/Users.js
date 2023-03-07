@@ -5,7 +5,8 @@ var mssql = require("../helper/Connect");
 
 router.get("/getUsers", async (req, res) => {
   try {
-    let search = req.query.search ? req.query.search : "";
+    let search = req.query.search ?  req.query.search : "";
+    let status = req.query.status ? req.query.status : "";
     let pageSize = req.query.pageSize ? req.query.pageSize : 10;
     let currentPage = req.query.currentPage ? req.query.currentPage : 1;
     await mssql.sql.query(`SELECT 
@@ -30,6 +31,11 @@ router.get("/getUsers", async (req, res) => {
           if (search) {
             query = query.filter((a) => a.id_card.includes(search) || (a.prefix_name + a.name +' '+a.lastname).includes(search));
           }
+
+          if(status){
+            query = query.filter((a) => a.is_used.toString() === status.toString());
+          }
+          
           res.send(respon.pagination(parseInt(pageSize), parseInt(currentPage), query));
         } else {
             res.status(500).send(respon.error());
