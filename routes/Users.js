@@ -1,6 +1,6 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var respon = require("../helper/Respon");
+var respon = require('../helper/Respon');
 var mssql = require("../helper/Connect");
 
 router.get("/getUsers", async (req, res) => {
@@ -105,7 +105,7 @@ router.post("/createUser", async (req, res) => {
   try {
     console.log(req.body)
     const query = `INSERT INTO [user] (id_card, password, prefix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date,is_used,role)
-     VALUES ('${req.body.id_card}','${req.body.password}','${req.body.prefix_id}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phone_number}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifix_contact_id}', '${req.body.name_contact}', '${req.body.lastname_contact}', GETDATE(),1,0)`;
+     VALUES ('${req.body.idCard}','${req.body.password}','${req.body.prefixId}','${req.body.name}','${req.body.lastname}','${req.body.birthday}','${req.body.phoneNumber}','${req.body.gender}','${req.body.address}','${req.body.subdistrict}','${req.body.district}','${req.body.province}','${req.body.postcode}','${req.body.prifixContactId}', '${req.body.nameContact}', '${req.body.lastnameContact}', GETDATE(),1,0)`;
     await mssql.sql.query(query, (err, response) => {
       if (response) {
         res.status(200).send(respon.success());
@@ -142,22 +142,22 @@ router.put("/updateUser/:id", async (req, res) => {
   try {
     const query = `UPDATE [Q_ONLINE].[dbo].[user] 
         SET
-        id_card = '${req.body.id_card}', 
+        id_card = '${req.body.idCard}', 
         password = '${req.body.password}', 
-        prefix_id = '${req.body.prefix_id}', 
+        prefix_id = '${req.body.prefixId}', 
         name = '${req.body.name}', 
         lastname = '${req.body.lastname}', 
         birthday = '${req.body.birthday}', 
-        phone_number = '${req.body.phone_number}', 
+        phone_number = '${req.body.phoneNumber}', 
         gender = '${req.body.gender}', 
         address = '${req.body.address}', 
         subdistrict = '${req.body.subdistrict}',
         district = '${req.body.district}',
         province = '${req.body.province}',
         postcode = '${req.body.postcode}',
-        prifix_contact_id = '${req.body.prifix_contact_id}',
-        name_contact ='${req.body.name_contact}',
-        lastname_contact = '${req.body.lastname_contact}'
+        prifix_contact_id = '${req.body.prifixContactId}',
+        name_contact ='${req.body.nameContact}',
+        lastname_contact = '${req.body.lastnameContact}'
         WHERE id = '${req.params.id}' `;
     await mssql.sql.query(query, (err, response) => {
       if (response) {
