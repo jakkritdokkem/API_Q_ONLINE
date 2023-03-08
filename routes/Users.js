@@ -17,7 +17,7 @@ router.get("/getUsers", async (req, res) => {
       [prefix].name AS prefix_name,
       [user].name,
       [user].lastname,
-      CONCAT([prefix].name,' ',[user].name,' ',[user].lastname) AS fullname,
+      CONCAT([prefix].name,[user].name,' ',[user].lastname) AS fullname,
       [user].address,
       [user].subdistrict,
       [user].district,
