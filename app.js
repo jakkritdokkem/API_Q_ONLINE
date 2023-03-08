@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cors = require('cors');
 
 var homeRouter = require('./routes/Home');
+var authenRouter = require('./routes/Authentication');
 var treatmentRouter = require('./routes/Treatment');
 var doctorRouter = require('./routes/Doctor');
 var usersRouter = require('./routes/Users');
@@ -31,6 +32,7 @@ app.get('/:imageName', function (req, res) {
 });
 
 app.use('/', homeRouter);
+app.use('/authen', authenRouter);
 app.use('/users', usersRouter);
 app.use('/treatment', treatmentRouter);
 app.use('/doctor', doctorRouter);
