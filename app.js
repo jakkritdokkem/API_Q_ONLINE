@@ -5,13 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var homeRouter = require('./routes/Home');
 var treatmentRouter = require('./routes/Treatment');
 var doctorRouter = require('./routes/Doctor');
-var user = require('./routes/Users');
-var book_appointment = require('./routes/BookAppointment');
-var open_schedule = require('./routes/OpenSchedule');
+var usersRouter = require('./routes/Users');
+var bookAppointmentRouter = require('./routes/BookAppointment');
+var openScheduleRouter = require('./routes/OpenSchedule');
 
 var app = express();
 
@@ -26,13 +25,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-app.use('/', indexRouter);
+app.use('/', homeRouter);
 app.use('/users', usersRouter);
 app.use('/treatment', treatmentRouter);
 app.use('/doctor', doctorRouter);
-app.use('/user',user);
-app.use('/book-appointment',book_appointment);
-app.use('/open-schedule',open_schedule);
+app.use('/user', usersRouter);
+app.use('/book-appointment', bookAppointmentRouter);
+app.use('/open-schedule', openScheduleRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
