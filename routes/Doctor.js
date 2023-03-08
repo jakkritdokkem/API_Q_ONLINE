@@ -145,7 +145,7 @@ router.post('/createDoctor', upload.single('image'), async function (req, res) {
 
     const query = `INSERT INTO doctor
     (treatment_type_id, prefix_id, path_image, name, lastname, created_date, is_used)
-    values('${treatment}', '${prefixId}', ${image.filename}, '${name}', '${lastname}', GETDATE(), 1)`;
+    values('${treatment}', '${prefixId}', '${image.filename}', '${name}', '${lastname}', GETDATE(), 1)`;
 
     await mssql.sql.query(query, function (err, response) {
       if (response) {
