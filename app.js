@@ -25,6 +25,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
+app.get('/:imageName', function (req, res) {
+  const { imageName } = req.params;
+  res.sendFile(`${__dirname}/uploads/${imageName}`);
+});
+
 app.use('/', homeRouter);
 app.use('/users', usersRouter);
 app.use('/treatment', treatmentRouter);

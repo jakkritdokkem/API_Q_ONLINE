@@ -1,7 +1,18 @@
 var express = require('express');
 var router = express.Router();
+var multer = require('multer');
 var mssql = require('../helper/Connect');
 var respon = require('../helper/Respon');
+
+var storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './uploads');
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.fieldname + '-' + Date.now() + '.png');
+  },
+});
+var upload = multer({ storage: storage });
 
 router.get('/getDoctor', async function (req, res) {
   try {
@@ -61,7 +72,7 @@ router.get('/getDoctor', async function (req, res) {
   }
 });
 
-router.get('/getDetailDoctor/:id', async (req, res) => {
+router.get('/getDetailDoctor/:id', async function (req, res) {
   try {
     mssql.sql.query(`SELECT * FROM doctor WHERE doctor.id = '${req.params.id}'`, function (err, response) {
       if (response) {
@@ -84,7 +95,7 @@ router.get('/getDetailDoctor/:id', async (req, res) => {
   }
 });
 
-router.get('/getDoctorBy/:id', async (req, res) => {
+router.get('/getDoctorBy/:id', async function (req, res) {
   try {
     const query = `SELECT
     doc.id,
@@ -127,13 +138,14 @@ router.get('/getDoctorBy/:id', async (req, res) => {
   }
 });
 
-router.post('/createDoctor', async (req, res) => {
+router.post('/createDoctor', upload.single('image'), async function (req, res) {
   try {
     const { treatment, prefixId, name, lastname } = req.body;
+    const image = req.file;
 
     const query = `INSERT INTO doctor
-    (treatment_type_id, prefix_id, name, lastname, created_date, is_used)
-    values('${treatment}', '${prefixId}', '${name}', '${lastname}', GETDATE(), 1)`;
+    (treatment_type_id, prefix_id, path_image, name, lastname, created_date, is_used)
+    values('${treatment}', '${prefixId}', ${image.filename}, '${name}', '${lastname}', GETDATE(), 1)`;
 
     await mssql.sql.query(query, function (err, response) {
       if (response) {
@@ -151,17 +163,20 @@ router.post('/createDoctor', async (req, res) => {
   }
 });
 
-router.put('/updateDoctor/:id', async (req, res) => {
+router.put('/updateDoctor/:id', upload.single('image'), async function (req, res) {
   try {
     const { treatment, prefixId, name, lastname } = req.body;
+    const image = req.file;
 
+    console.log('req.file', req.file);
     console.log('req.body', req.body);
     console.log('req.params', req.params);
 
     const query = `UPDATE doctor
     SET
     treatment_type_id = '${treatment}' ,
-    prefix_id = '${prefixId}',
+    prefix_id = '${prefixId}'
+    ${image ? `,path_image='${image.filename}',` : ','}
     name = '${name}',
     lastname = '${lastname}'
     WHERE id = '${req.params.id}'`;
