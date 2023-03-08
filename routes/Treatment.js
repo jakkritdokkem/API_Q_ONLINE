@@ -71,7 +71,7 @@ router.get('/getDetailTreatment/:id', async function (req, res) {
 router.get('/getTreatmentAll', async function (req, res) {
   try {
 
-    await mssql.sql.query(`SELECT id, treatment_type_name AS name FROM treatment_type`, function (err, response) {
+    await mssql.sql.query(`SELECT id, treatment_type_name AS name FROM treatment_type WHERE is_used = '1'`, function (err, response) {
       if (response) {
         if (response.recordset) {
           var query = response.recordset;

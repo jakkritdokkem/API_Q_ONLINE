@@ -99,12 +99,17 @@ router.get('/getDoctorBy/:id', async (req, res) => {
     FROM doctor AS doc
     LEFT JOIN treatment_type AS tre ON doc.treatment_type_id = tre.id
     LEFT JOIN prefix AS pre ON doc.prefix_id = pre.id
-    WHERE doc.treatment_type_id = '${req.params.id}'`;
+    WHERE doc.is_used = '1'`;
 
     mssql.sql.query(query, function (err, response) {
       if (response) {
         if (response.recordset) {
           var query = response.recordset;
+
+          if (parseInt(req.params.id) !== 0) {
+            query = query.filter((a) => parseInt(a.treatment_type_id) === parseInt(req.params.id));
+          }
+
           res.status(200).send(respon.multi(query));
         } else {
           res.status(500).send(respon.error());

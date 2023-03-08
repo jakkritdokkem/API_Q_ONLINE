@@ -30,8 +30,8 @@ app.use('/users', usersRouter);
 app.use('/treatment', treatmentRouter);
 app.use('/doctor', doctorRouter);
 app.use('/user', usersRouter);
-app.use('/book-appointment', bookAppointmentRouter);
-app.use('/open-schedule', openScheduleRouter);
+app.use('/bookAppointment', bookAppointmentRouter);
+app.use('/openSchedule', openScheduleRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
