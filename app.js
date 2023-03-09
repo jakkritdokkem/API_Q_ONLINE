@@ -10,7 +10,6 @@ var authenRouter = require('./routes/Authentication');
 var treatmentRouter = require('./routes/Treatment');
 var doctorRouter = require('./routes/Doctor');
 var usersRouter = require('./routes/Users');
-var bookAppointmentRouter = require('./routes/BookAppointment');
 var openScheduleRouter = require('./routes/OpenSchedule');
 
 var app = express();
@@ -37,7 +36,6 @@ app.use('/users', usersRouter);
 app.use('/treatment', treatmentRouter);
 app.use('/doctor', doctorRouter);
 app.use('/user', usersRouter);
-app.use('/bookAppointment', bookAppointmentRouter);
 app.use('/openSchedule', openScheduleRouter);
 
 // catch 404 and forward to error handler
