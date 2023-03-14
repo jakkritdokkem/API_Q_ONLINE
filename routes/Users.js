@@ -85,6 +85,39 @@ router.get('/getDetailUser/:id', async function (req, res) {
   }
 });
 
+router.get('/getUserAll', async function (req, res) {
+  try {
+    console.log('req params :', req.params);
+
+    const query = `SELECT
+    u.id,
+    u.id_card,
+    (p.name + ' ' + u.name + ' ' + u.lastname) AS fullname
+    FROM [user] AS u
+    INNER JOIN prefix AS p ON u.prefix_id = p.id
+    WHERE u.role = 0 AND u.is_used = '1'`;
+
+    await mssql.sql.query(query, function (err, response) {
+      if (response) {
+        if (response.recordset) {
+          var query = response.recordset;
+          res.status(200).send(respon.multi(query));
+        } else {
+          res.status(500).send(respon.error());
+        }
+      } else {
+        if (err) {
+          res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+        } else {
+          res.status(500).send(respon.error());
+        }
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // router.post('/register', async (req, res) => {
 //   try {
 //     const query = `INSERT INTO [user] (id_card, password, prefix_id, name, lastname, birthday, phone_number, gender, address, subdistrict, district, province, postcode, prifix_contact_id, name_contact, lastname_contact, created_date, is_used, role)

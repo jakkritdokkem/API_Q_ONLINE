@@ -230,4 +230,29 @@ router.post('/createBookAppointment', async function (req, res) {
   }
 });
 
+router.put('/updateStatusBook/:id', async function (req, res) {
+  try {
+    console.log('req params :', req.params);
+    console.log('req body :', req.body);
+
+    await mssql.sql.query(
+      `UPDATE [book_appointment] SET status = '${req.body.status}'
+       WHERE id = '${req.params.id}'`,
+      function (err, response) {
+        if (response) {
+          res.status(200).send(respon.success());
+        } else {
+          if (err) {
+            res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+          } else {
+            res.status(500).send(respon.error());
+          }
+        }
+      },
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;

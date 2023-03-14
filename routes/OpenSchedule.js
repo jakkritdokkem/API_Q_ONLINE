@@ -124,8 +124,8 @@ router.get('/getOpenSchedulePublic', async (req, res) => {
     INNER JOIN treatment_type AS T ON O.treatment_type_id = T.id
     INNER JOIN doctor AS D ON O.doctor_id = D.id
     INNER JOIN prefix AS P ON D.prefix_id = P.id
-	  WHERE o.is_used = '1'
-    ORDER BY O.open_date DESC`;
+	  WHERE o.is_used = '1' AND O.open_date >= FORMAT(GETDATE(), 'yyyy-MM-dd')
+    ORDER BY O.open_date ASC`;
 
     await mssql.sql.query(query, function (err, response) {
       if (response) {
