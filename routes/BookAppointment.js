@@ -3,6 +3,102 @@ var router = express.Router();
 var respon = require('../helper/Respon');
 var mssql = require('../helper/Connect');
 
+async function checkBook(openScheduleId, userId) {
+  try {
+    const query = `SELECT * FROM book_appointment
+    WHERE open_schedule_id = '${openScheduleId}' AND user_id = '${userId}'`;
+
+    const res = await mssql.sql.query(query);
+    if (res) {
+      if (res.recordset) {
+        var value = res.recordset;
+        if (value.length > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        res.status(500).send(respon.error());
+      }
+    } else {
+      if (err) {
+        res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+      } else {
+        res.status(500).send(respon.error());
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function genNumber(id) {
+  try {
+    const query = `SELECT
+    op.id,
+    ba.number,
+    op.open_date
+    FROM book_appointment AS ba
+    INNER JOIN open_schedule AS op ON ba.open_schedule_id = op.id
+    WHERE op.id = ${id}
+    ORDER BY ba.id DESC`;
+
+    const res = await mssql.sql.query(query);
+    if (res) {
+      if (res.recordset) {
+        var value = res.recordset;
+        if (value.length > 0) {
+          let data = value.find((a) => a.id === id);
+          return data ? data.number + 1 : 1;
+        } else {
+          return 1;
+        }
+      } else {
+        res.status(500).send(respon.error());
+      }
+    } else {
+      if (err) {
+        res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+      } else {
+        res.status(500).send(respon.error());
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function genCode(number, openScheduleId) {
+  try {
+    const query = `SELECT * FROM open_schedule WHERE id = '${openScheduleId}'`;
+
+    const res = await mssql.sql.query(query);
+    if (res) {
+      if (res.recordset) {
+        var value = res.recordset;
+        let data = value.find((a) => a.id === openScheduleId);
+        const today = data ? new Date(data.open_date) : new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yy = (today.getFullYear() + 543).toString().substring(2);
+        const num = number.toString().padStart(4, '0');
+
+        return `${yy}${mm}${dd}${num}`;
+      } else {
+        res.status(500).send(respon.error());
+      }
+    } else {
+      if (err) {
+        res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+      } else {
+        res.status(500).send(respon.error());
+      }
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 router.get('/getBookAppointment', async (req, res) => {
   try {
     let userId = req.query.userId ? req.query.userId : '';
@@ -90,6 +186,45 @@ router.get('/getBookAppointment', async (req, res) => {
         }
       }
     });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.post('/createBookAppointment', async function (req, res) {
+  try {
+    console.log('req body :', req.body);
+
+    const { openScheduleId, userId, remark } = req.body;
+    if (!openScheduleId || !userId) {
+      console.log('กรุณากรอกข้อมูลให้ครบถ้วน');
+      res.send(respon.error());
+    }
+
+    const check = await checkBook(openScheduleId, userId);
+    if (check) {
+      console.log('คุณมีคิวสำหรับรายการนี้อยู่แล้ว');
+      res.send(respon.error(200, 'คุณมีคิวสำหรับรายการนี้อยู่แล้ว'));
+    } else {
+      const number = await genNumber(openScheduleId);
+      const code = await genCode(number, openScheduleId);
+
+      const query = `INSERT INTO book_appointment
+      (code, number, open_schedule_id, user_id, note, status, created_date, is_used)
+      VALUES ('${code}', '${number}', '${openScheduleId}', '${userId}', '${remark}', '1', GETDATE(), 1)`;
+
+      await mssql.sql.query(query, function (err, response) {
+        if (response) {
+          res.status(200).send(respon.success());
+        } else {
+          if (err) {
+            res.status(500).send(respon.error(err.originalError.info.number, err.originalError.info.message));
+          } else {
+            res.status(500).send(respon.error());
+          }
+        }
+      });
+    }
   } catch (error) {
     console.log(error);
   }
